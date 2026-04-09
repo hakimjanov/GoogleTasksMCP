@@ -1,7 +1,7 @@
 from fastmcp import FastMCP
-from fastmcp.server.auth.providers.jwt import StaticTokenVerifier
 import logging
 from .config import Config
+from .oauth import GoogleTasksOAuthProvider
 from .tools import register_tools
 
 # Configure logging
@@ -10,23 +10,14 @@ logger = logging.getLogger(__name__)
 
 def create_server():
     logger.info(f"Initializing Google Tasks MCP Server...")
-    
-    # Optional: Enable Auth if token provided
-    auth = None
-    if Config.MCP_SERVER_TOKEN:
-         logger.info("Enabling Static Token Authentication")
-         auth = StaticTokenVerifier(tokens={
-            Config.MCP_SERVER_TOKEN: {
-                "client_id": "google-tasks-mcp-client",
-                "scopes": ["read", "write"]
-            }
-         })
 
-    mcp = FastMCP("google-tasks", auth=auth) 
-    
+    auth = GoogleTasksOAuthProvider(base_url=Config.MCP_BASE_URL)
+
+    mcp = FastMCP("google-tasks", auth=auth)
+
     # Register our tools
     register_tools(mcp)
-    
+
     return mcp
 
 mcp = create_server()
