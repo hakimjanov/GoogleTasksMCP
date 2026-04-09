@@ -27,20 +27,23 @@ class GoogleTasksOAuthProvider(InMemoryOAuthProvider):
 
         issuer_path = urlparse(str(self.issuer_url)).path.rstrip("/")
 
-        # Fix FastMCP RFC 8414 bug: add a duplicate route with the issuer path
-        # appended so /.well-known/oauth-authorization-server/tasks resolves
-        for route in list(routes):
-            if route.path == "/.well-known/oauth-authorization-server":
-                from starlette.routing import Route
+        # Fix FastMCP RFC 8414 / RFC 9728 bug: add duplicate routes with the
+        # issuer path appended so discovery works behind a reverse proxy
+        from starlette.routing import Route
 
+        well_known_prefixes = [
+            "/.well-known/oauth-authorization-server",
+            "/.well-known/oauth-protected-resource",
+        ]
+        for route in list(routes):
+            if route.path in well_known_prefixes:
                 routes.append(
                     Route(
-                        f"/.well-known/oauth-authorization-server{issuer_path}",
+                        f"{route.path}{issuer_path}",
                         route.endpoint,
                         methods=route.methods,
                     )
                 )
-                break
 
         return routes
 
