@@ -11,5 +11,6 @@ class Config:
     
     # Server Auth
     MCP_SERVER_TOKEN = os.getenv("MCP_SERVER_TOKEN", "google-tasks-token")
+    MCP_BASE_URL = os.getenv("MCP_BASE_URL", "https://textdonna.com/tasks")
     PORT = int(os.getenv("PORT", "3333"))
     HOST = os.getenv("HOST", "127.0.0.1") # Bind to all interfaces for Docker

@@ -56,6 +56,19 @@ A Model Context Protocol (MCP) server for Google Tasks, written in Python and ru
      GoogleTasksMCP
    ```
 
+## Nginx Reverse Proxy (OAuth 2.1)
+
+If the server runs behind a reverse proxy (e.g. at `textdonna.com/tasks/`), add these rules so OAuth discovery endpoints are reachable:
+
+```nginx
+location /.well-known/oauth-protected-resource/tasks/ {
+    proxy_pass http://127.0.0.1:3333/.well-known/oauth-protected-resource/tasks/;
+}
+location /.well-known/oauth-authorization-server/tasks {
+    proxy_pass http://127.0.0.1:3333/.well-known/oauth-authorization-server/tasks;
+}
+```
+
 ## Tools available
 - `list_task_lists`
 - `create_task`

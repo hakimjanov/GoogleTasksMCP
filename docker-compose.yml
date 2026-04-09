@@ -6,4 +6,6 @@ services:
     network_mode: "host"
     env_file:
       - .env
+    environment:
+      - MCP_BASE_URL=${MCP_BASE_URL}
     restart: unless-stopped
